@@ -8,6 +8,8 @@ import com.xu007.reggie.service.CategoryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 /**
  * 分类管理
  * @author Xu007
@@ -68,5 +70,19 @@ public class CategoryController {
         categoryService.updateById(category);
 
         return R.success("分类信息修改成功");
+    }
+
+    @GetMapping("/list")
+    public R<List<Category>> list(Category category){
+        //条件构造器
+        LambdaQueryWrapper<Category> categoryLambdaQueryWrapper=new LambdaQueryWrapper<>();
+        //添加条件
+        categoryLambdaQueryWrapper.eq(category.getType()!=null,Category::getType,category.getType());
+        //添加排序条件
+        categoryLambdaQueryWrapper.orderByAsc(Category::getSort).orderByDesc(Category::getUpdateTime);
+
+        List<Category> list = categoryService.list(categoryLambdaQueryWrapper);
+
+        return R.success(list);
     }
 }
